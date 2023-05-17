@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class Immagine {
     @Id
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "immagine")
     private String immagine;

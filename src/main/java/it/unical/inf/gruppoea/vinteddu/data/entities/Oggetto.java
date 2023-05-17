@@ -23,7 +23,7 @@ public class Oggetto {
 
     @Id
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "nome", length = 50)
     private String nome;
