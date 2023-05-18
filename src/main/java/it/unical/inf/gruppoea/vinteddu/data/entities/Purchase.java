@@ -11,27 +11,27 @@ import java.time.LocalDate;
 @Table(name = "oggetti")
 @Data
 @NoArgsConstructor
-public class Acquisto {
+public class Purchase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @Column(name = "dataacquisto")
-    private LocalDate dataAcquisto;
+    private LocalDate purchaseDate;
 
     @OneToOne
     @JoinColumn(name = "idoggetto", referencedColumnName = "id")
-    private Oggetto oggetto;
+    private Item item;
 
     @ManyToOne
     @JoinColumn(name = "idacquirente", referencedColumnName = "id")
-    private Utente acquirente;
+    private User buyer;
 
     @ManyToOne
     @JoinColumn(name = "idvenditore", referencedColumnName = "id")
-    private Utente venditore;
+    private User seller;
 
     @Column(name = "prezzo")
-    private BigDecimal prezzo;
+    private BigDecimal price;
 }

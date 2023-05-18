@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "oggetti")
 @Data
 @NoArgsConstructor
-public class Oggetto {
+public class Item {
 
     public enum Status {
         ON_SALE,
@@ -26,27 +26,27 @@ public class Oggetto {
     private Long id;
 
     @Column(name = "nome", length = 50)
-    private String nome;
+    private String name;
 
     @Column(name = "descrizione", length = 500)
-    private String descrizione;
+    private String description;
 
     @Column(name = "prezzo", nullable = false)
-    private BigDecimal prezzo;
+    private BigDecimal price;
 
     @Column(name = "datacreazione", nullable = false)
-    private LocalDate dataCreazione;
+    private LocalDate creationDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stato")
-    private Status stato;
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "idutente", referencedColumnName = "id")
-    private Utente venditore;
+    private User seller;
     @Column(name = "immagine")
-    private String immagineMain;
+    private String mainImage;
 
-    @OneToMany(mappedBy = "oggetto")
-    private List<Immagine> immagini;
+    @OneToMany(mappedBy = "item")
+    private List<Image> images;
 }

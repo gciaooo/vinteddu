@@ -8,15 +8,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "immaginioggetti")
 @Data
 @NoArgsConstructor
-public class Immagine {
+public class Image {
     @Id
     @Column(name = "id")
     private Long id;
 
     @Column(name = "immagine")
-    private String immagine;
+    private String image;
 
     @ManyToOne
     @JoinColumn(name = "oggetti", referencedColumnName = "id")
-    private Oggetto oggetto;
+    private Item item;
 }

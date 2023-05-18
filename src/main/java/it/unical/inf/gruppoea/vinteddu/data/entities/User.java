@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "utenti")
 @Data
 @NoArgsConstructor
-public class Utente {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +20,9 @@ public class Utente {
     @Column(name = "username")
     private String username;
     @Column(name = "nome")
-    private String nome;
+    private String firstName;
     @Column(name = "cognome")
-    private String cognome;
+    private String lastName;
     @Column(name = "email")
     private String email;
 
@@ -30,20 +30,20 @@ public class Utente {
     private String password;
 
     @Column(name = "datanascita")
-    private LocalDate dataNascita;
+    private LocalDate birthDate;
 
     @Column(name = "indirizzo")
-    private String indirizzo;
+    private String address;
 
     @Column(name = "numerotelefono")
-    private String numeroTelefono;
+    private String phoneNumber;
 
-    @OneToMany(mappedBy = "acquirente")
-    private List<Acquisto> acquisti;
+    @OneToMany(mappedBy = "buyer")
+    private List<Purchase> acquisti;
 
-    @OneToMany(mappedBy = "venditore")
-    private List<Acquisto> vendite;
+    @OneToMany(mappedBy = "seller")
+    private List<Purchase> vendite;
 
-    @OneToMany(mappedBy = "venditore")
-    private List<Oggetto> oggettiInVendita;
+    @OneToMany(mappedBy = "seller")
+    private List<Item> itemsOnSale;
 }
