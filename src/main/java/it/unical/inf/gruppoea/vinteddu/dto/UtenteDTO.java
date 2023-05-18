@@ -14,6 +14,10 @@ public class UtenteDTO {
 
     private int id;
 
+    @NotBlank(message = "L'username non può essere vuoto")
+    @Size(max = 50)
+    private String username;
+
     @NotBlank(message = "Il nome non può essere vuoto")
     @Size(max = 50)
     private String nome;
