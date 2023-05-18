@@ -39,10 +39,10 @@ public class User {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "buyer")
-    private List<Purchase> acquisti;
+    private List<Purchase> itemsBought;
 
     @OneToMany(mappedBy = "seller")
-    private List<Purchase> vendite;
+    private List<Purchase> itemsSold;
 
     @OneToMany(mappedBy = "seller")
     private List<Item> itemsOnSale;
