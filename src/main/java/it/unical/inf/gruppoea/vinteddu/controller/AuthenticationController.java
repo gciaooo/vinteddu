@@ -1,22 +1,32 @@
 package it.unical.inf.gruppoea.vinteddu.controller;
 
+import com.nimbusds.jose.JOSEException;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
+import it.unical.inf.gruppoea.vinteddu.repositories.UserRepository;
+import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
+import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping(path="/api/v1", produces = "application/json")
 @CrossOrigin(origins = "http://localhost:8080")
 public class AuthenticationController {
 
-    private final User userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationController(User userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthenticationController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
@@ -36,7 +46,7 @@ public class AuthenticationController {
             @RequestParam("password") String password) {
         if("admin".equals(username) || userRepository.findByUsername(username) != null)
             return new ResponseEntity<>("existing username", HttpStatus.CONFLICT);
-        UserAccount userAccount = new UserAccount(username, passwordEncoder.encode(password));
+        User userAccount = new User(username, passwordEncoder.encode(password));
         userRepository.save(userAccount);
         return new ResponseEntity<>("registered", HttpStatus.OK);
     }
@@ -44,7 +54,7 @@ public class AuthenticationController {
     @GetMapping(path="/users/{username}")
     @PreAuthorize("#username.equals(authentication.principal.getUsername()) or hasRole('ADMIN')")
     public String getUser(@PathVariable("username") String username) {
-        UserAccount user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("username", user.getUsername());
         return jsonObject.toString();
@@ -52,7 +62,7 @@ public class AuthenticationController {
 
     @GetMapping(path="/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public Iterable<UserAccount> users() {
+    public Iterable<User> users() {
         return userRepository.findAll();
     }
 

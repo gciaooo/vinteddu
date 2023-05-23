@@ -46,4 +46,7 @@ public class User {
 
     @OneToMany(mappedBy = "seller")
     private List<Item> itemsOnSale;
+
+    public User(String username, String encode) {
+    }
 }
