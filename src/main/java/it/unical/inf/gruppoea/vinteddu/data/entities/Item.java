@@ -1,5 +1,6 @@
 package it.unical.inf.gruppoea.vinteddu.data.entities;
 
+import it.unical.inf.gruppoea.vinteddu.dto.Dictionary.Dictionary;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,12 +16,7 @@ import java.util.List;
 public class Item {
 
 
-    public enum Status {
-        ON_SALE,
-        IN_DELIVERY,
-        DELIVERED,
-        ABORTED
-    }
+
 
     @Id
     @Column(name = "id")
@@ -40,7 +36,7 @@ public class Item {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stato")
-    private Status status;
+    private Dictionary.Status status;
 
     @ManyToOne
     @JoinColumn(name = "idutente", referencedColumnName = "id")

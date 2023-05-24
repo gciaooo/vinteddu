@@ -1,5 +1,6 @@
 package it.unical.inf.gruppoea.vinteddu.dto;
 
+import it.unical.inf.gruppoea.vinteddu.dto.Dictionary.Dictionary;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -39,7 +40,7 @@ public class OggettoDTO {
     private LocalDate dataCreazione;
 
     @NotBlank
-    private int stato;
+    private Dictionary.Status stato;
 
     @NotNull
     @Positive

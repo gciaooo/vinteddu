@@ -1,7 +1,9 @@
 package it.unical.inf.gruppoea.vinteddu.controller;
 import it.unical.inf.gruppoea.vinteddu.data.dao.ItemDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Item;
+import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import it.unical.inf.gruppoea.vinteddu.dto.OggettoDTO;
+import it.unical.inf.gruppoea.vinteddu.dto.UtenteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +29,20 @@ public class HomeController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addOggetto(@RequestBody OggettoDTO oggettoDTO) {
+    public ResponseEntity<String> addOggetto(@RequestBody OggettoDTO oggettoDTO, @RequestBody UtenteDTO utenteDTO){
         Item oggetto = new Item();
+        User utente = new User();
+
+        utente.setId((long) utenteDTO.getId());
+
+
         oggetto.setId((long) oggettoDTO.getId());
         oggetto.setName(oggettoDTO.getNome());
         oggetto.setDescription(oggettoDTO.getDescrizione());
         oggetto.setPrice(oggettoDTO.getPrezzo());
         oggetto.setCreationDate(oggettoDTO.getDataCreazione());
-        //oggetto.setStatus(oggettoDTO.getStato());
-        //oggetto.setSeller(oggettoDTO.getIdUtente());
-
+        oggetto.setStatus(oggettoDTO.getStato());
+        oggetto.setSeller(utente);
 
 
         Item savedOggetto = itemRepository.save(oggetto);
