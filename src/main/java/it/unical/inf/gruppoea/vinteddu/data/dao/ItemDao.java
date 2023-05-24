@@ -11,4 +11,6 @@ public interface ItemDao extends CrudRepository<Item, Long>, JpaSpecificationExe
     List<Item> getItemBySeller(User venditore);
 
     List<Item> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String desc);
+
+    List<Item> findByNomeContaining(String nome);
 }
