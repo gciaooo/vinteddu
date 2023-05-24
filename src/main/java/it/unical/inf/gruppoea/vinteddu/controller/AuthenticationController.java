@@ -12,9 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.Map;
 
 @RestController
@@ -51,19 +54,33 @@ public class AuthenticationController {
         return new ResponseEntity<>("registered", HttpStatus.OK);
     }
 
-    @GetMapping(path="/users/{username}")
-    @PreAuthorize("#username.equals(authentication.principal.getUsername()) or hasRole('ADMIN')")
-    public String getUser(@PathVariable("username") String username) {
-        User user = userRepository.findByUsername(username);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("username", user.getUsername());
-        return jsonObject.toString();
-    }
+//    @GetMapping(path="/users/{username}")
+//    @PreAuthorize("#username.equals(authentication.principal.getUsername()) or hasRole('ADMIN')")
+//    public String getUser(@PathVariable("username") String username) {
+//        User user = userRepository.findByUsername(username);
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("username", user.getUsername());
+//        return jsonObject.toString();
+//    }
 
     @GetMapping(path="/users")
     @PreAuthorize("hasRole('ADMIN')")
     public Iterable<User> users() {
         return userRepository.findAll();
+    }
+
+
+
+    @GetMapping("/current")
+    public ResponseEntity<Long> getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            User user = (User) authentication.getPrincipal();
+            Long userId = user.getId();
+            return ResponseEntity.ok(userId);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
 }
