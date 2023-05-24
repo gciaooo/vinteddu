@@ -24,7 +24,7 @@ public class HomeController {
 
     @GetMapping("/search")
     public ResponseEntity<List<Item>> searchItemByName(@RequestParam("nome") String nome) {
-        List<Item> oggetti = itemRepository.findByNomeContaining(nome);
+        List<Item> oggetti = itemRepository.findByNameContainingIgnoreCase(nome);
         return ResponseEntity.ok(oggetti);
     }
 
