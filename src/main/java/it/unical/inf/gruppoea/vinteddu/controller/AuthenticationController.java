@@ -1,8 +1,8 @@
 package it.unical.inf.gruppoea.vinteddu.controller;
 
 import com.nimbusds.jose.JOSEException;
+import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
-import it.unical.inf.gruppoea.vinteddu.repositories.UserRepository;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
@@ -22,11 +22,11 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:8080")
 public class AuthenticationController {
 
-    private final UserRepository userRepository;
+    private final UserDao userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthenticationController(UserDao userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;

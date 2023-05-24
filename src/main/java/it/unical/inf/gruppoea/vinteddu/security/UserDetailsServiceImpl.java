@@ -1,6 +1,6 @@
 package it.unical.inf.gruppoea.vinteddu.security;
 
-import it.unical.inf.gruppoea.vinteddu.repositories.UserRepository;
+import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,9 +14,9 @@ import java.util.List;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private UserDao userRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserDao userRepository) {
         this.userRepository = userRepository;
     }
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
