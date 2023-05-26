@@ -1,6 +1,7 @@
 package it.unical.inf.gruppoea.vinteddu.controller;
 import it.unical.inf.gruppoea.vinteddu.data.dao.ItemDao;
 import it.unical.inf.gruppoea.vinteddu.data.dao.PurchaseDao;
+import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Item;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Purchase;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
@@ -25,6 +26,9 @@ public class HomeController {
     private ItemDao itemRepository;
     @Autowired
     private PurchaseDao purchaseRepository;
+    @Autowired
+    private UserDao userRepository;
+
 
     @GetMapping("/search")
     public ResponseEntity<List<Item>> searchItemByName(@RequestParam("nome") String nome) {
@@ -62,6 +66,13 @@ public class HomeController {
     public ResponseEntity<List<Purchase>> getUserPurchases(@PathVariable("userId") Long userId) {
         List<Purchase> userPurchases = purchaseRepository.findByBuyerId(userId);
         return ResponseEntity.ok(userPurchases);
+    }
+
+    @GetMapping("/{userId}/Account")
+    public ResponseEntity<User> getAccount(@PathVariable("userId") Long userId){
+        User account = userRepository.findById(userId);
+
+        return ResponseEntity.ok(account);
     }
 
 

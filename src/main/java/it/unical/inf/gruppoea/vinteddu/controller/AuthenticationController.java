@@ -4,7 +4,9 @@ import com.nimbusds.jose.JOSEException;
 import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -82,5 +84,18 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
+
+
+//    @PostMapping("/logout")
+//    public ResponseEntity<String> logout(HttpServletRequest request) {
+//        HttpSession session = request.getSession(false);
+//        if (session != null) {
+//            session.removeAttribute("token");
+//            session.invalidate();
+//        }
+//
+//        return ResponseEntity.ok("Logged out successfully");
+//    }
 
 }
