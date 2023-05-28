@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path="/api/v1/users", produces = "application/json")
@@ -68,12 +69,12 @@ public class HomeController {
         return ResponseEntity.ok(userPurchases);
     }
 
-    @GetMapping("/{userId}/Account")
-    public ResponseEntity<User> getAccount(@PathVariable("userId") Long userId){
-        User account = userRepository.findById(userId);
-
-        return ResponseEntity.ok(account);
+    @GetMapping("/{itemId}/item")
+    public ResponseEntity<Optional<Item>> getItem(@PathVariable("itemId") Long itemId){
+        Optional<Item> item = itemRepository.findById(itemId);
+        return ResponseEntity.ok(item);
     }
+
 
 
 

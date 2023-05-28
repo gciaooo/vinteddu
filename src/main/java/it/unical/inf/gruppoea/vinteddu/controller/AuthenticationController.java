@@ -16,8 +16,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 import java.nio.file.attribute.UserPrincipal;
 import java.util.Map;
@@ -53,6 +55,7 @@ public class AuthenticationController {
             return new ResponseEntity<>("existing username", HttpStatus.CONFLICT);
         User userAccount = new User(username, passwordEncoder.encode(password));
         userRepository.save(userAccount);
+        //logger.info("Questo è un messaggio di log informativo");
         return new ResponseEntity<>("registered", HttpStatus.OK);
     }
 
