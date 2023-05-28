@@ -49,5 +49,7 @@ public class User {
     private List<Item> itemsOnSale;
 
     public User(String username, String encode) {
+        this.username = username;
+        this.password = encode;
     }
 }
