@@ -1,9 +1,13 @@
 package it.unical.inf.gruppoea.vinteddu.data.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "wallet")
+@Data
+@NoArgsConstructor
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,6 +17,6 @@ public class Wallet {
     private Long idUtente;
 
     @Column(name = "saldo")
-    private Float saldo;
+    private Double saldo;
 
 }

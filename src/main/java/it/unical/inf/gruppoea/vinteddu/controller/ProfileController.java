@@ -2,11 +2,15 @@ package it.unical.inf.gruppoea.vinteddu.controller;
 
 
 import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
+import it.unical.inf.gruppoea.vinteddu.data.dao.WalletDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
+import it.unical.inf.gruppoea.vinteddu.data.entities.Wallet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path="/api/v1", produces = "application/json")
@@ -16,6 +20,8 @@ public class ProfileController {
 
     @Autowired
     private UserDao userRepository;
+    @Autowired
+    private WalletDao walletRepository;
 
     @GetMapping("/{userId}/Account")
     public ResponseEntity<User> getAccount(@PathVariable("userId") Long userId){
@@ -24,11 +30,16 @@ public class ProfileController {
         return ResponseEntity.ok(account);
     }
 
-    @PostMapping("/{userId}/Wallet")
-    public ResponseEntity<String> wallet_recharge(@RequestParam double amount){
+    @PostMapping("/Wallet/{userId}")
+    public ResponseEntity<String> wallet_recharge(@RequestParam double amount, @PathVariable("userId") Long userId){
+        try {
 
+            walletRepository.aggiornaSaldo(userId, amount);
 
-        return new ResponseEntity<>("registered", HttpStatus.OK);
+            return ResponseEntity.ok("Wallet ricaricato con successo");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante la ricarica del wallet");
+        }
     }
 
 
