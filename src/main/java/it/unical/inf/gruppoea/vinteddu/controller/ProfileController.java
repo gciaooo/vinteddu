@@ -4,6 +4,7 @@ package it.unical.inf.gruppoea.vinteddu.controller;
 import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +24,12 @@ public class ProfileController {
         return ResponseEntity.ok(account);
     }
 
+    @PostMapping("/{userId}/Wallet")
+    public ResponseEntity<String> wallet_recharge(@RequestParam double amount){
 
 
-
+        return new ResponseEntity<>("registered", HttpStatus.OK);
+    }
 
 
 }

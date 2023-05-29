@@ -1,4 +1,4 @@
-package it.unical.inf.gruppoea.vinteddu.config;
+package it.unical.inf.gruppoea.vinteddu.security.config;
 
 
 import it.unical.inf.gruppoea.vinteddu.security.RequestFilter;
