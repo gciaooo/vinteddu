@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public interface WalletDao extends CrudRepository<Wallet, Long>, JpaSpecificationExecutor<Wallet>{
 
     @Modifying
-    @Query("UPDATE Wallet w SET w.saldo = :nuovoSaldo WHERE w.id = :walletId")
+    @Query("UPDATE wallet w SET w.saldo = :nuovoSaldo WHERE w.id = :walletId")
     void aggiornaSaldo(@Param("walletId") Long walletId, @Param("nuovoSaldo") Double nuovoSaldo);
 
 }

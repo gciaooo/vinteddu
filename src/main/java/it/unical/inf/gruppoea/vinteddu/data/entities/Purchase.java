@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "oggetti")
@@ -18,7 +19,7 @@ public class Purchase {
     private Long id;
 
     @Column(name = "dataacquisto")
-    private LocalDate purchaseDate;
+    private Date purchaseDate;
 
     @OneToOne
     @JoinColumn(name = "idoggetto", referencedColumnName = "id")
@@ -33,5 +34,5 @@ public class Purchase {
     private User seller;
 
     @Column(name = "prezzo")
-    private BigDecimal price;
+    private Double price;
 }
