@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path="/api/v1/users", produces = "application/json")
+@RequestMapping(path="/api/v1", produces = "application/json")
 @CrossOrigin(origins = "http://localhost:8080")
 public class BuyerController {
 
@@ -32,7 +32,7 @@ public class BuyerController {
     private UserDao userRepository;
     @Autowired
     private WalletDao walletRepository;
-    
+
     @PostMapping("/buyItem")
     public ResponseEntity<String> buyItem(@RequestParam double amount, @RequestBody Item item, @RequestParam User user){
 
@@ -52,7 +52,7 @@ public class BuyerController {
         Wallet wallet_ = wallet.orElse(null);
         var saldo = wallet_.getSaldo() - amount ;
         wallet_.setSaldo(saldo);
-        walletRepository.aggiornaSaldo(wallet_.getId(), saldo);
+        walletRepository.aggiornaSaldo(wallet_.getIdUtente(), saldo);
 
 
         itemRepository.aggiornaStato(item.getId(), String.valueOf(Dictionary.Status.IN_DELIVERY));
