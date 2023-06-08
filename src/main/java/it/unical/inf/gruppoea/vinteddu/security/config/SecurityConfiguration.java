@@ -42,5 +42,6 @@ public class SecurityConfiguration {
                 authorizeHttpRequests().anyRequest().authenticated().and().csrf().disable().
                 sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
                 addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class).build();
+
     }
 }
