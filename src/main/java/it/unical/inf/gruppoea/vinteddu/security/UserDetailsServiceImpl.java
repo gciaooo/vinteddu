@@ -19,11 +19,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetailsServiceImpl(UserDao userRepository) {
         this.userRepository = userRepository;
     }
+
+
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if("admin".equals(username))
             return new User(username, new BCryptPasswordEncoder(12).encode("strongPassword"), List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
-        it.unical.inf.gruppoea.vinteddu.data.entities.User userAccount = userRepository.findByUsername(username);
-        if(userAccount != null) return new User(username, userAccount.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
+         it.unical.inf.gruppoea.vinteddu.data.entities.User user = userRepository.findByUsername(username);
+        if(user != null) return new User(username, user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
         throw new UsernameNotFoundException("User not found");
     }
 }

@@ -1,18 +1,25 @@
 package it.unical.inf.gruppoea.vinteddu.data.entities;
 
+import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "utenti")
 @Data
 @NoArgsConstructor
 public class User {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,17 +46,18 @@ public class User {
     @Column(name = "numerotelefono")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "buyer")
-    private List<Purchase> itemsBought;
-
-    @OneToMany(mappedBy = "seller")
-    private List<Purchase> itemsSold;
-
-    @OneToMany(mappedBy = "seller")
-    private List<Item> itemsOnSale;
+//    @OneToMany(mappedBy = "buyer")
+//    private List<Purchase> itemsBought;
+//
+//    @OneToMany(mappedBy = "seller")
+//    private List<Purchase> itemsSold;
+//
+//    @OneToMany(mappedBy = "seller")
+//    private List<Item> itemsOnSale;
 
     public User(String username, String encode) {
         this.username = username;
         this.password = encode;
     }
+
 }
