@@ -10,6 +10,7 @@ import it.unical.inf.gruppoea.vinteddu.dto.UtenteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path="/api/v1/users", produces = "application/json")
+@RequestMapping(path="/api/v3", produces = "application/json")
 @CrossOrigin(origins = "http://localhost:8080")
 public class HomeController {
 
@@ -69,10 +70,12 @@ public class HomeController {
         return ResponseEntity.ok(userPurchases);
     }
 
-    @GetMapping("/{itemId}/item")
-    public ResponseEntity<Optional<Item>> getItem(@PathVariable("itemId") Long itemId){
+    @GetMapping("/item/{itemId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<Item> getItem(@PathVariable("itemId") Long itemId){
         Optional<Item> item = itemRepository.findById(itemId);
-        return ResponseEntity.ok(item);
+        Item item_value = item.orElse(null);
+        return ResponseEntity.ok(item_value);
     }
 
 

@@ -16,7 +16,11 @@ public class Image {
     @Column(name = "immagine")
     private String image;
 
-    @ManyToOne
-    @JoinColumn(name = "oggetti", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+   // @JoinColumn(name = "idoggetto", referencedColumnName = "id")
     private Item item;
+
+
+    void setItem(Item item ) { this.item = item;}
+    public Item getItem(){return item;}
 }

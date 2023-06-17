@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -41,9 +43,31 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "idutente", referencedColumnName = "id")
     private User seller;
-    @Column(name = "immagine")
+
+
+
+    @Column(name = "immagini")
     private String mainImage;
 
-    @OneToMany(mappedBy = "item")
-    private List<Image> images;
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Image> images = new ArrayList<>();
+
+
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", creationDate=" + creationDate +
+                ", status=" + status +
+                ", seller=" + seller +
+                ", mainImage='" + mainImage + '\'' +
+                '}';
+    }
+
+    //public List<Image> getComments() { return Collections.unmodifiableList(images); }
+
 }

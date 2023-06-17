@@ -2,8 +2,10 @@ package it.unical.inf.gruppoea.vinteddu.controller;
 
 
 import com.nimbusds.jose.JOSEException;
+import it.unical.inf.gruppoea.vinteddu.data.dao.ItemDao;
 import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import it.unical.inf.gruppoea.vinteddu.data.dao.WalletDao;
+import it.unical.inf.gruppoea.vinteddu.data.entities.Item;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Wallet;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
@@ -27,6 +29,8 @@ public class ProfileController {
     private UserDao userRepository;
     @Autowired
     private WalletDao walletRepository;
+    @Autowired
+    private ItemDao itemRepository;
 
 
 
@@ -77,6 +81,8 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante la ricarica del wallet");
         }
     }
+
+
 
 
 }

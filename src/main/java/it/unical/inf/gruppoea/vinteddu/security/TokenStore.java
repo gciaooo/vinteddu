@@ -30,7 +30,7 @@ public class TokenStore {
 
     public String createToken(Map<String, Object> claims) throws JOSEException {
         Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Instant notBefore = issuedAt.plus(5, ChronoUnit.SECONDS);
+        Instant notBefore = issuedAt.plus(1, ChronoUnit.SECONDS);
         Instant expiration = issuedAt.plus(24, ChronoUnit.HOURS);
 
         JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
