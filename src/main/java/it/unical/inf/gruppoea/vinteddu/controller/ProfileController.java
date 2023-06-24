@@ -8,6 +8,8 @@ import it.unical.inf.gruppoea.vinteddu.data.dao.WalletDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Item;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Wallet;
+import it.unical.inf.gruppoea.vinteddu.dto.UtenteDTO;
+import it.unical.inf.gruppoea.vinteddu.dto.WalletDTO;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ public class ProfileController {
 
    @GetMapping("/user/{token}")
    @PreAuthorize("hasRole('ROLE_USER')")
-   public ResponseEntity<User> getAccount(@PathVariable("token") String token){
+   public ResponseEntity<UtenteDTO> getAccount(@PathVariable("token") String token){
        String username = null;
        try {
            username = TokenStore.getInstance().getUser(token);
@@ -46,9 +48,32 @@ public class ProfileController {
            e.printStackTrace();
        }
        User account = userRepository.findByUsername(username);
+       var utente = new UtenteDTO();
 
-       return ResponseEntity.ok(account);
+       utente.setId(account.getId());
+       utente.setCognome(account.getFirstName());
+       utente.setEmail(account.getEmail());
+       utente.setDataNascita(account.getBirthDate());
+       utente.setIndirizzo(account.getAddress());
+       utente.setNome(account.getLastName());
+       utente.setNumeroTelefono(account.getPhoneNumber());
+       utente.setUsername(account.getUsername());
+
+       return ResponseEntity.ok(utente);
    }
+
+    @GetMapping("/wallet/{userId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<WalletDTO> getSaldo(@PathVariable("userId") Long id){
+
+        Wallet wallet = walletRepository.findById(id).get();
+        var wallet_dto = new WalletDTO();
+
+        wallet_dto.setIdUtente(wallet.getIdUtente());
+        wallet_dto.setSaldo(wallet.getSaldo());
+
+        return ResponseEntity.ok(wallet_dto);
+    }
 
 //    @GetMapping("/users/{username}")
 //    @PreAuthorize("#username.equals(authentication.principal.getUsername())")

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Data
 public class UtenteDTO {
 
-    private int id;
+    private Long id;
 
     @NotBlank(message = "L'username non può essere vuoto")
     @Size(max = 50)

@@ -15,6 +15,6 @@ public class WalletDTO {
     private Long idUtente;
 
     @NotNull
-    private Float saldo;
+    private Double saldo;
 
 }

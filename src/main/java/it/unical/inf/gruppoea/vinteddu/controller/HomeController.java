@@ -32,8 +32,9 @@ public class HomeController {
     private UserDao userRepository;
 
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Item>> searchItemByName(@RequestParam("nome") String nome) {
+    @GetMapping("/search/{nome}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<Item>> searchItemByName(@PathVariable("nome") String nome) {
         List<Item> oggetti = itemRepository.findByNameContainingIgnoreCase(nome);
         return ResponseEntity.ok(oggetti);
     }
