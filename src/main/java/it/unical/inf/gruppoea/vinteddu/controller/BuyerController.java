@@ -34,7 +34,7 @@ public class BuyerController {
     private WalletDao walletRepository;
 
     @PostMapping("/buyItem")
-    public ResponseEntity<String> buyItem(@RequestParam double amount, @RequestBody Item item, @RequestParam User user){
+    public ResponseEntity<String> buyItem(@RequestParam int amount, @RequestBody Item item, @RequestParam User user){
 
         Date currentDate = new Date();
 
@@ -52,7 +52,7 @@ public class BuyerController {
         Wallet wallet_ = wallet.orElse(null);
         var saldo = wallet_.getSaldo() - amount ;
         wallet_.setSaldo(saldo);
-        walletRepository.aggiornaSaldo(wallet_.getIdUtente(), saldo);
+        walletRepository.aggiornaSaldo(wallet_.getId_utente(), saldo);
 
 
         itemRepository.aggiornaStato(item.getId(), String.valueOf(Dictionary.Status.IN_DELIVERY));

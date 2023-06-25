@@ -69,7 +69,7 @@ public class ProfileController {
         Wallet wallet = walletRepository.findById(id).get();
         var wallet_dto = new WalletDTO();
 
-        wallet_dto.setIdUtente(wallet.getIdUtente());
+        wallet_dto.setIdUtente(wallet.getId_utente());
         wallet_dto.setSaldo(wallet.getSaldo());
 
         return ResponseEntity.ok(wallet_dto);
@@ -96,10 +96,12 @@ public class ProfileController {
 //    }
 
     @PostMapping("/Wallet/{userId}")
-    public ResponseEntity<String> wallet_recharge(@RequestParam double amount, @PathVariable("userId") Long userId){
+    public ResponseEntity<String> wallet_recharge(@RequestParam int amount, @PathVariable("userId") Long userId){
         try {
+            var saldo = walletRepository.findById(userId);
 
-            walletRepository.aggiornaSaldo(userId, amount);
+
+            walletRepository.aggiornaSaldo(userId, saldo.get().getSaldo()+amount);
 
             return ResponseEntity.ok("Wallet ricaricato con successo");
         } catch (Exception e) {

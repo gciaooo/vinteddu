@@ -34,5 +34,5 @@ public class Purchase {
     private User seller;
 
     @Column(name = "prezzo")
-    private Double price;
+    private Integer price;
 }

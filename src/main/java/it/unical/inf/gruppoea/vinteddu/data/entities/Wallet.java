@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 public class Wallet {
     @Id
     @Column(name = "id_utente")
-    private Long idUtente;
+    private Long id_utente;
 
     @Column(name = "saldo")
-    private Double saldo;
+    private Integer saldo;
 
 }
