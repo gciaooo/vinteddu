@@ -73,10 +73,20 @@ public class HomeController {
 
     @GetMapping("/item/{itemId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<Item> getItem(@PathVariable("itemId") Long itemId){
+    public ResponseEntity<OggettoDTO> getItem(@PathVariable("itemId") Long itemId){
         Optional<Item> item = itemRepository.findById(itemId);
         Item item_value = item.orElse(null);
-        return ResponseEntity.ok(item_value);
+        var item_dto = new OggettoDTO();
+        item_dto.setId(Math.toIntExact(item_value.getId()));
+        item_dto.setIdUtente(Math.toIntExact(item_value.getSeller().getId()));
+        item_dto.setNome(item_value.getName());
+        item_dto.setDescrizione(item_value.getDescription());
+        item_dto.setPrezzo(item_value.getPrice());
+        item_dto.setDataCreazione(item_value.getCreationDate());
+        item_dto.setStato(item_value.getStatus());
+        item_dto.setImmagini(item_value.getMainImage());
+
+        return ResponseEntity.ok(item_dto);
     }
 
 

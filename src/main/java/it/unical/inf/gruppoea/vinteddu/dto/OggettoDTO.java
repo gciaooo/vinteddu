@@ -47,7 +47,7 @@ public class OggettoDTO {
     private int idUtente;
 
     @ElementCollection
-    @CollectionTable(name = "Immagini", joinColumns = @JoinColumn(name = "ID_Oggetto"))
-    @Column(name = "URL")
-    private List<String> immagini;
+    //@CollectionTable(name = "Immagini", joinColumns = @JoinColumn(name = "ID_Oggetto"))
+    //@Column(name = "URL")
+    private String immagini;
 }
