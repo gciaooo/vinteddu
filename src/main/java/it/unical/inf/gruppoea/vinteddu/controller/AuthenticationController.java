@@ -5,6 +5,7 @@ import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
 import it.unical.inf.gruppoea.vinteddu.security.config.SecurityConfiguration;
+import it.unical.inf.gruppoea.vinteddu.utilities.EmailManager;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
@@ -13,12 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -29,13 +30,14 @@ public class AuthenticationController {
     private final UserDao userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmailManager emailManager;
 
 
-    public AuthenticationController(UserDao userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, SecurityConfiguration securityConfiguration) {
+    public AuthenticationController(UserDao userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, SecurityConfiguration securityConfiguration, EmailManager emailManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-
+        this.emailManager = emailManager;
     }
 
     @PostMapping(path = "/authenticate")
@@ -50,11 +52,19 @@ public class AuthenticationController {
     @PostMapping(path="/register")
     public ResponseEntity<String> register(
             @RequestParam("username") String username,
-            @RequestParam("password") String password) {
+            @RequestParam("password") String password,
+            @RequestParam("email") String email,
+            @RequestParam("nome") String nome,
+            @RequestParam("cognome") String cognome,
+            @RequestParam("datanascita") LocalDate datanascita,
+            @RequestParam("indirizzo") String indirizzo,
+            @RequestParam("numerotelefono") String numerotelefono
+            ){
         if("admin".equals(username) || userRepository.findByUsername(username) != null)
             return new ResponseEntity<>("existing username", HttpStatus.CONFLICT);
-        User userAccount = new User(username, passwordEncoder.encode(password));
+        User userAccount = new User(username, passwordEncoder.encode(password), email, nome, cognome, datanascita, indirizzo, numerotelefono);
         userRepository.save(userAccount);
+        //emailManager.sendEmail(1, "" , userAccount.getEmail());
         //logger.info("Questo è un messaggio di log informativo");
         return new ResponseEntity<>("registered", HttpStatus.OK);
     }
