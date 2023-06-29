@@ -2,12 +2,15 @@ package it.unical.inf.gruppoea.vinteddu.controller;
 
 
 import com.nimbusds.jose.JOSEException;
+import it.unical.inf.gruppoea.vinteddu.data.dao.FavoritesDao;
 import it.unical.inf.gruppoea.vinteddu.data.dao.ItemDao;
 import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import it.unical.inf.gruppoea.vinteddu.data.dao.WalletDao;
+import it.unical.inf.gruppoea.vinteddu.data.entities.Favorites;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Item;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Wallet;
+import it.unical.inf.gruppoea.vinteddu.dto.OggettoDTO;
 import it.unical.inf.gruppoea.vinteddu.dto.UtenteDTO;
 import it.unical.inf.gruppoea.vinteddu.dto.WalletDTO;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
@@ -19,6 +22,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,6 +38,8 @@ public class ProfileController {
     private WalletDao walletRepository;
     @Autowired
     private ItemDao itemRepository;
+    @Autowired
+    private FavoritesDao favoritesRepository;
 
 
 
@@ -96,6 +103,7 @@ public class ProfileController {
 //    }
 
     @PostMapping("/Wallet/{userId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<String> wallet_recharge(@RequestParam int amount, @PathVariable("userId") Long userId){
         try {
             var saldo = walletRepository.findById(userId);
@@ -109,6 +117,28 @@ public class ProfileController {
         }
     }
 
+
+    @GetMapping("/Favorites/{userId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<Item>> getPreferiti(@PathVariable("userId") Long userId){
+       try{
+           var preferiti = favoritesRepository.getListaPreferiti(userId);
+
+           List<Item> lista = new ArrayList<>();
+
+
+           for(int i = 0; i<preferiti.size(); i++){
+
+               var ogg = itemRepository.findById(preferiti.get(i)).orElse(null);
+               lista.add(ogg);
+           }
+
+           return ResponseEntity.ok(lista);
+
+       }catch(Exception e){
+           return null;
+       }
+    }
 
 
 
