@@ -120,17 +120,23 @@ public class ProfileController {
 
     @GetMapping("/Favorites/{userId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<Item>> getPreferiti(@PathVariable("userId") Long userId){
+    public ResponseEntity<List<OggettoDTO>> getPreferiti(@PathVariable("userId") Long userId){
        try{
            var preferiti = favoritesRepository.getListaPreferiti(userId);
 
-           List<Item> lista = new ArrayList<>();
-
+           List<OggettoDTO> lista = new ArrayList<>();
+           var oggetto = new OggettoDTO();
 
            for(int i = 0; i<preferiti.size(); i++){
 
                var ogg = itemRepository.findById(preferiti.get(i)).orElse(null);
-               lista.add(ogg);
+               oggetto.setId(Math.toIntExact(ogg.getId()));
+               oggetto.setNome(ogg.getName());
+               oggetto.setStato(ogg.getStatus());
+               oggetto.setPrezzo(ogg.getPrice());
+               oggetto.setImmagini(ogg.getMainImage());
+
+               lista.add(oggetto);
            }
 
            return ResponseEntity.ok(lista);
