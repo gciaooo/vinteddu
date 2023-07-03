@@ -8,15 +8,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailManager {
 
-    private final JavaMailSender javaMailSender;
-
-
-
 
     @Autowired
-    public EmailManager(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
+    private JavaMailSender javaMailSender;
+
+
+
+
+//    @Autowired
+//    public EmailManager(JavaMailSender javaMailSender) {
+//        this.javaMailSender = javaMailSender;
+//    }
 
     public void sendEmail(int n, String param, String to){
         EmailBuilder builder = new EmailBuilder();

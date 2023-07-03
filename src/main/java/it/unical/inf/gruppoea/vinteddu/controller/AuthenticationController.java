@@ -2,10 +2,13 @@ package it.unical.inf.gruppoea.vinteddu.controller;
 
 import com.nimbusds.jose.JOSEException;
 import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
+import it.unical.inf.gruppoea.vinteddu.data.dao.WalletDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
+import it.unical.inf.gruppoea.vinteddu.data.entities.Wallet;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
 import it.unical.inf.gruppoea.vinteddu.security.config.SecurityConfiguration;
 import it.unical.inf.gruppoea.vinteddu.utilities.EmailManager;
+import it.unical.inf.gruppoea.vinteddu.utilities.PasswordGenerator;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -28,13 +30,16 @@ import java.util.Map;
 public class AuthenticationController {
 
     private final UserDao userRepository;
+    private final WalletDao walletRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailManager emailManager;
 
 
-    public AuthenticationController(UserDao userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, SecurityConfiguration securityConfiguration, EmailManager emailManager) {
+
+    public AuthenticationController(UserDao userRepository, WalletDao walletRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, SecurityConfiguration securityConfiguration, EmailManager emailManager ) {
         this.userRepository = userRepository;
+        this.walletRepository = walletRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.emailManager = emailManager;
@@ -47,6 +52,20 @@ public class AuthenticationController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         String token = TokenStore.getInstance().createToken(Map.of("username",  username));
         response.addHeader(HttpHeaders.AUTHORIZATION,"Bearer "+ token);
+    }
+
+    @PostMapping(path = "/newPassword")
+    public ResponseEntity<String> getNewPassword(@RequestParam("email") String email, @RequestParam("username") String username){
+
+        var pass = new PasswordGenerator();
+        var password_new = pass.generaStringaCasuale(8);
+
+        emailManager.sendEmail(2, password_new, email);
+
+        var utente = userRepository.findByUsername(username);
+        userRepository.aggiornaPassword(username, passwordEncoder.encode(password_new));
+        return new ResponseEntity<>("Passowrd ok", HttpStatus.OK);
+
     }
 
     @PostMapping(path="/register")
@@ -64,7 +83,11 @@ public class AuthenticationController {
             return new ResponseEntity<>("existing username", HttpStatus.CONFLICT);
         User userAccount = new User(username, passwordEncoder.encode(password), email, nome, cognome, datanascita, indirizzo, numerotelefono);
         userRepository.save(userAccount);
-        //emailManager.sendEmail(1, "" , userAccount.getEmail());
+        Wallet wallet = new Wallet();
+        wallet.setId_utente(userRepository.findByUsername(username).getId());
+        wallet.setSaldo(0);
+        walletRepository.save(wallet);
+        emailManager.sendEmail(1, "" , userAccount.getEmail());
         //logger.info("Questo è un messaggio di log informativo");
         return new ResponseEntity<>("registered", HttpStatus.OK);
     }
