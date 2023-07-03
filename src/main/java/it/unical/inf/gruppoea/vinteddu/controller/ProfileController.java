@@ -16,6 +16,7 @@ import it.unical.inf.gruppoea.vinteddu.dto.WalletDTO;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -144,6 +145,35 @@ public class ProfileController {
        }catch(Exception e){
            return null;
        }
+    }
+
+    @GetMapping("/inVendita/{userId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<OggettoDTO>> getItemInVendita(@PathVariable("userId") Long userId ){
+        try{
+            var utente = userRepository.findById(userId);
+            var item = itemRepository.getItemBySeller(utente);
+
+            List<OggettoDTO> lista = new ArrayList<>();
+
+
+            for(int i = 0; i<item.size(); i++){
+
+                var oggetto = new OggettoDTO();
+                oggetto.setId(Math.toIntExact(item.get(i).getId()));
+                oggetto.setNome(item.get(i).getName());
+                oggetto.setStato(item.get(i).getStatus());
+                oggetto.setPrezzo(item.get(i).getPrice());
+                oggetto.setImmagini(item.get(i).getMainImage());
+
+                lista.add(oggetto);
+            }
+
+            return ResponseEntity.ok(lista);
+
+        }catch(Exception e){
+            return null;
+        }
     }
 
 
