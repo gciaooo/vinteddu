@@ -70,7 +70,7 @@ public class ProfileController {
        return ResponseEntity.ok(utente);
    }
 
-    @GetMapping("/wallet/{userId}")
+    @GetMapping("/wallet/{token}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<WalletDTO> getSaldo(@PathVariable("userId") Long id){
 
@@ -119,11 +119,13 @@ public class ProfileController {
     }
 
 
-    @GetMapping("/Favorites/{userId}")
+    @GetMapping("/Favorites/{token}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<OggettoDTO>> getPreferiti(@PathVariable("userId") Long userId){
+    public ResponseEntity<List<OggettoDTO>> getPreferiti(@PathVariable("token") String token){
        try{
-           var preferiti = favoritesRepository.getListaPreferiti(userId);
+           var username = TokenStore.getInstance().getUser(token);
+           User utente = userRepository.findByUsername(username);
+           var preferiti = favoritesRepository.getListaPreferiti(utente.getId());
 
            List<OggettoDTO> lista = new ArrayList<>();
            var oggetto = new OggettoDTO();
@@ -149,9 +151,11 @@ public class ProfileController {
 
     @GetMapping("/inVendita/{userId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<OggettoDTO>> getItemInVendita(@PathVariable("userId") Long userId ){
+    public ResponseEntity<List<OggettoDTO>> getItemInVendita(@PathVariable("token") String token ){
         try{
-            var utente = userRepository.findById(userId);
+            var username = TokenStore.getInstance().getUser(token);
+            User utente = userRepository.findByUsername(username);
+
             var item = itemRepository.getItemBySeller(utente);
 
             List<OggettoDTO> lista = new ArrayList<>();

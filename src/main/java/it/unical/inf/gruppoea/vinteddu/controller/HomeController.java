@@ -1,12 +1,16 @@
 package it.unical.inf.gruppoea.vinteddu.controller;
+import com.nimbusds.jose.JOSEException;
 import it.unical.inf.gruppoea.vinteddu.data.dao.ItemDao;
 import it.unical.inf.gruppoea.vinteddu.data.dao.PurchaseDao;
 import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Item;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Purchase;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
+import it.unical.inf.gruppoea.vinteddu.dto.Dictionary.Dictionary;
 import it.unical.inf.gruppoea.vinteddu.dto.OggettoDTO;
 import it.unical.inf.gruppoea.vinteddu.dto.UtenteDTO;
+import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
+import it.unical.inf.gruppoea.vinteddu.utilities.IdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,22 +46,29 @@ public class HomeController {
         return ResponseEntity.ok(oggetti);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> addOggetto(@RequestBody OggettoDTO oggettoDTO, @RequestBody UtenteDTO utenteDTO){
+    @PostMapping("/add/{token}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<String> addOggetto(
+            @PathVariable String token,
+            @RequestParam("nome") String nome,
+            @RequestParam("descrizione") String descrizione,
+            @RequestParam("prezzo") BigDecimal prezzo,
+            @RequestParam("immagine") String immagine) throws ParseException, JOSEException {
         Item oggetto = new Item();
-        User utente = new User();
+        var username = TokenStore.getInstance().getUser(token);
+        User utente = userRepository.findByUsername(username);
 
-        utente.setId((long) utenteDTO.getId());
 
 
-        oggetto.setId((long) oggettoDTO.getId());
-        oggetto.setName(oggettoDTO.getNome());
-        oggetto.setDescription(oggettoDTO.getDescrizione());
-        oggetto.setPrice(oggettoDTO.getPrezzo());
-        oggetto.setCreationDate(oggettoDTO.getDataCreazione());
-        oggetto.setStatus(oggettoDTO.getStato());
+
+        oggetto.setId(IdGenerator.generateIdItem());
+        oggetto.setName(nome);
+        oggetto.setDescription(descrizione);
+        oggetto.setPrice(prezzo);
+        oggetto.setCreationDate(LocalDate.now());
+        oggetto.setStatus(Dictionary.Status.ON_SALE);
         oggetto.setSeller(utente);
-
+        oggetto.setMainImage(immagine);
 
         Item savedOggetto = itemRepository.save(oggetto);
 
@@ -65,9 +79,12 @@ public class HomeController {
         }
     }
 
-    @GetMapping("/{userId}/purchases")
-    public ResponseEntity<List<Purchase>> getUserPurchases(@PathVariable("userId") Long userId) {
-        List<Purchase> userPurchases = purchaseRepository.findByBuyerId(userId);
+    @GetMapping("/{token}/purchases")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<Purchase>> getUserPurchases(@PathVariable("token") String token) throws ParseException, JOSEException {
+        var username = TokenStore.getInstance().getUser(token);
+        User utente = userRepository.findByUsername(username);
+        List<Purchase> userPurchases = purchaseRepository.findByBuyerId(utente.getId());
         return ResponseEntity.ok(userPurchases);
     }
 
