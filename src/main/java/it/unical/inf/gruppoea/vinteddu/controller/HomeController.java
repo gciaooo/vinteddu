@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,9 +42,21 @@ public class HomeController {
 
     @GetMapping("/search/{nome}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<Item>> searchItemByName(@PathVariable("nome") String nome) {
+    public ResponseEntity<List<OggettoDTO>> searchItemByName(@PathVariable("nome") String nome) {
         List<Item> oggetti = itemRepository.findByNameContainingIgnoreCase(nome);
-        return ResponseEntity.ok(oggetti);
+        List<OggettoDTO> lista = new ArrayList<>();
+
+
+        for(int i = 0; i<oggetti.size(); i++){
+
+            var oggetto = new OggettoDTO();
+            oggetto.setId(Math.toIntExact(oggetti.get(i).getId()));
+            oggetto.setNome(oggetti.get(i).getName());
+            oggetto.setPrezzo(oggetti.get(i).getPrice());
+
+            lista.add(oggetto);
+        }
+        return ResponseEntity.ok(lista);
     }
 
     @PostMapping("/add/{token}")
