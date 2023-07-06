@@ -1,5 +1,6 @@
 package it.unical.inf.gruppoea.vinteddu.data.dao;
 
+import it.unical.inf.gruppoea.vinteddu.data.entities.Favorites;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface FavoritesDao extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
+public interface FavoritesDao extends JpaRepository<Favorites, Integer>, JpaSpecificationExecutor<Favorites> {
 
     @Transactional
     @Modifying

@@ -2,6 +2,7 @@ package it.unical.inf.gruppoea.vinteddu.data.dao;
 
 import it.unical.inf.gruppoea.vinteddu.data.entities.Item;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
+import it.unical.inf.gruppoea.vinteddu.dto.Dictionary.Dictionary;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,10 +20,10 @@ public interface ItemDao extends CrudRepository<Item, Long>, JpaSpecificationExe
     List<Item> findByNameContainingIgnoreCase(String nome);
 
 
-
+    @Transactional
     @Modifying
     @Query("UPDATE Item w SET w.status = :nuovoStato WHERE w.id = :itemId")
-    void aggiornaStato(@Param("itemId") Long itemId, @Param("nuovoStato") String nuovoStato);
+    void aggiornaStato(@Param("itemId") Long itemId, @Param("nuovoStato") Dictionary.Status nuovoStato);
 
 
 

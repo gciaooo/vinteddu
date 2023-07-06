@@ -2,14 +2,13 @@ package it.unical.inf.gruppoea.vinteddu.controller;
 
 
 import com.nimbusds.jose.JOSEException;
-import it.unical.inf.gruppoea.vinteddu.data.dao.FavoritesDao;
-import it.unical.inf.gruppoea.vinteddu.data.dao.ItemDao;
-import it.unical.inf.gruppoea.vinteddu.data.dao.UserDao;
-import it.unical.inf.gruppoea.vinteddu.data.dao.WalletDao;
+import it.unical.inf.gruppoea.vinteddu.data.dao.*;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Favorites;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Item;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import it.unical.inf.gruppoea.vinteddu.data.entities.Wallet;
+import it.unical.inf.gruppoea.vinteddu.dto.AcquistiDTO;
+import it.unical.inf.gruppoea.vinteddu.dto.Dictionary.Dictionary;
 import it.unical.inf.gruppoea.vinteddu.dto.OggettoDTO;
 import it.unical.inf.gruppoea.vinteddu.dto.UtenteDTO;
 import it.unical.inf.gruppoea.vinteddu.dto.WalletDTO;
@@ -22,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,8 @@ public class ProfileController {
     private ItemDao itemRepository;
     @Autowired
     private FavoritesDao favoritesRepository;
+    @Autowired
+    private PurchaseDao purchaseRepository;
 
 
 
@@ -128,18 +130,20 @@ public class ProfileController {
            var preferiti = favoritesRepository.getListaPreferiti(utente.getId());
 
            List<OggettoDTO> lista = new ArrayList<>();
-           var oggetto = new OggettoDTO();
 
-           for(int i = 0; i<preferiti.size(); i++){
 
+           for(int i = 0; i<preferiti.size(); i++) {
+               var oggetto = new OggettoDTO();
                var ogg = itemRepository.findById(preferiti.get(i)).orElse(null);
                oggetto.setId(Math.toIntExact(ogg.getId()));
                oggetto.setNome(ogg.getName());
+               oggetto.setDescrizione(ogg.getDescription());
                oggetto.setStato(ogg.getStatus());
-               oggetto.setPrezzo(ogg.getPrice());
+               oggetto.setPrezzo(BigDecimal.valueOf(ogg.getPrice()));
                oggetto.setImmagini(ogg.getMainImage());
-
-               lista.add(oggetto);
+               if (ogg.getStatus() == Dictionary.Status.ON_SALE){
+                   lista.add(oggetto);
+               }
            }
 
            return ResponseEntity.ok(lista);
@@ -149,7 +153,7 @@ public class ProfileController {
        }
     }
 
-    @GetMapping("/inVendita/{userId}")
+    @GetMapping("/inVendita/{token}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<List<OggettoDTO>> getItemInVendita(@PathVariable("token") String token ){
         try{
@@ -166,10 +170,40 @@ public class ProfileController {
                 var oggetto = new OggettoDTO();
                 oggetto.setId(Math.toIntExact(item.get(i).getId()));
                 oggetto.setNome(item.get(i).getName());
+                oggetto.setDescrizione(item.get(i).getDescription());
                 oggetto.setStato(item.get(i).getStatus());
-                oggetto.setPrezzo(item.get(i).getPrice());
+                oggetto.setPrezzo(BigDecimal.valueOf(item.get(i).getPrice()));
                 oggetto.setImmagini(item.get(i).getMainImage());
 
+                lista.add(oggetto);
+            }
+
+            return ResponseEntity.ok(lista);
+
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    @GetMapping("/getPurchase/{token}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<List<OggettoDTO>> getAcquisti(@PathVariable("token") String token){
+        try{
+            var username = TokenStore.getInstance().getUser(token);
+            User utente = userRepository.findByUsername(username);
+            var acquisti = purchaseRepository.findByBuyerId(utente.getId());
+
+            List<OggettoDTO> lista = new ArrayList<>();
+
+
+            for(int i = 0; i<acquisti.size(); i++) {
+                var oggetto = new OggettoDTO();
+                var ogg = itemRepository.findById(acquisti.get(i).getId()).orElse(null);
+                oggetto.setNome(ogg.getName());
+                oggetto.setDescrizione(ogg.getDescription());
+                oggetto.setStato(ogg.getStatus());
+                oggetto.setPrezzo(BigDecimal.valueOf(ogg.getPrice()));
+                oggetto.setImmagini(ogg.getMainImage());
                 lista.add(oggetto);
             }
 

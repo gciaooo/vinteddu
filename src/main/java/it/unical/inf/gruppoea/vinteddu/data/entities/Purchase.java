@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
-@Table(name = "oggetti")
+@Table(name = "acquisti")
 @Data
 @NoArgsConstructor
 public class Purchase {

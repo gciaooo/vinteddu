@@ -8,7 +8,6 @@ import it.unical.inf.gruppoea.vinteddu.data.entities.Purchase;
 import it.unical.inf.gruppoea.vinteddu.data.entities.User;
 import it.unical.inf.gruppoea.vinteddu.dto.Dictionary.Dictionary;
 import it.unical.inf.gruppoea.vinteddu.dto.OggettoDTO;
-import it.unical.inf.gruppoea.vinteddu.dto.UtenteDTO;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
 import it.unical.inf.gruppoea.vinteddu.utilities.IdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +41,11 @@ public class HomeController {
 
     @GetMapping("/search/{nome}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<OggettoDTO>> searchItemByName(@PathVariable("nome") String nome) {
+    public ResponseEntity<List<OggettoDTO>> searchItemByName(@PathVariable("nome") String nome, @RequestParam String token) throws ParseException, JOSEException {
         List<Item> oggetti = itemRepository.findByNameContainingIgnoreCase(nome);
         List<OggettoDTO> lista = new ArrayList<>();
+        var username = TokenStore.getInstance().getUser(token);
+        User utente = userRepository.findByUsername(username);
 
 
         for(int i = 0; i<oggetti.size(); i++){
@@ -52,9 +53,11 @@ public class HomeController {
             var oggetto = new OggettoDTO();
             oggetto.setId(Math.toIntExact(oggetti.get(i).getId()));
             oggetto.setNome(oggetti.get(i).getName());
-            oggetto.setPrezzo(oggetti.get(i).getPrice());
+            oggetto.setPrezzo(BigDecimal.valueOf(oggetti.get(i).getPrice()));
+            if(oggetti.get(i).getStatus()== Dictionary.Status.ON_SALE && oggetti.get(i).getSeller().getId()!=utente.getId()){
+                lista.add(oggetto);
+            }
 
-            lista.add(oggetto);
         }
         return ResponseEntity.ok(lista);
     }
@@ -65,7 +68,7 @@ public class HomeController {
             @PathVariable String token,
             @RequestParam("nome") String nome,
             @RequestParam("descrizione") String descrizione,
-            @RequestParam("prezzo") BigDecimal prezzo,
+            @RequestParam("prezzo") Integer prezzo,
             @RequestParam("immagine") String immagine) throws ParseException, JOSEException {
         Item oggetto = new Item();
         var username = TokenStore.getInstance().getUser(token);
@@ -111,7 +114,7 @@ public class HomeController {
         item_dto.setIdUtente(Math.toIntExact(item_value.getSeller().getId()));
         item_dto.setNome(item_value.getName());
         item_dto.setDescrizione(item_value.getDescription());
-        item_dto.setPrezzo(item_value.getPrice());
+        item_dto.setPrezzo(BigDecimal.valueOf(item_value.getPrice()));
         item_dto.setDataCreazione(item_value.getCreationDate());
         item_dto.setStato(item_value.getStatus());
         item_dto.setImmagini(item_value.getMainImage());

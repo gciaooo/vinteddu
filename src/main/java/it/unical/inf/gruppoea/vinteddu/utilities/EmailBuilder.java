@@ -10,6 +10,9 @@ public class EmailBuilder {
             case 2:
                 var string= EmailRepository.recupera_password.replace("%s", parametro);
                 return string;
+            case 3:
+                var string_ = EmailRepository.oggetto_acquistato.replace("%s", parametro);
+                return string_;
         }
 
         return null;

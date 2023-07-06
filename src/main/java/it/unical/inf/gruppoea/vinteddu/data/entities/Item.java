@@ -31,7 +31,7 @@ public class Item {
     private String description;
 
     @Column(name = "prezzo", nullable = false)
-    private BigDecimal price;
+    private Integer price;
 
     @Column(name = "datacreazione", nullable = false)
     private LocalDate creationDate;

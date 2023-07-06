@@ -6,7 +6,8 @@ public class Dictionary {
         ON_SALE,
         IN_DELIVERY,
         DELIVERED,
-        ABORTED
+        ABORTED,
+        SOLD
     }
 
 }
