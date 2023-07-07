@@ -13,6 +13,7 @@ import it.unical.inf.gruppoea.vinteddu.dto.OggettoDTO;
 import it.unical.inf.gruppoea.vinteddu.dto.UtenteDTO;
 import it.unical.inf.gruppoea.vinteddu.dto.WalletDTO;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
+import net.bytebuddy.asm.Advice;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -74,9 +75,12 @@ public class ProfileController {
 
     @GetMapping("/wallet/{token}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<WalletDTO> getSaldo(@PathVariable("userId") Long id){
+    public ResponseEntity<WalletDTO> getSaldo(@PathVariable("token") String token) throws ParseException, JOSEException {
 
-        Wallet wallet = walletRepository.findById(id).get();
+        var username = TokenStore.getInstance().getUser(token);
+        User utente = userRepository.findByUsername(username);
+
+        Wallet wallet = walletRepository.findById(utente.getId()).get();
         var wallet_dto = new WalletDTO();
 
         wallet_dto.setIdUtente(wallet.getId_utente());
@@ -105,19 +109,18 @@ public class ProfileController {
 //        return jsonObject.toString();
 //    }
 
-    @PostMapping("/Wallet/{userId}")
+    @PostMapping("/WalletCharge/{token}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<String> wallet_recharge(@RequestParam int amount, @PathVariable("userId") Long userId){
-        try {
-            var saldo = walletRepository.findById(userId);
+    public HttpStatus wallet_recharge(@RequestParam int amount, @PathVariable("token") String token) throws ParseException, JOSEException {
+
+       var username = TokenStore.getInstance().getUser(token);
+       User utente = userRepository.findByUsername(username);
+       var saldo = walletRepository.findById(utente.getId());
 
 
-            walletRepository.aggiornaSaldo(userId, saldo.get().getSaldo()+amount);
+       walletRepository.aggiornaSaldo(utente.getId(), saldo.get().getSaldo()+amount);
+       return HttpStatus.OK;
 
-            return ResponseEntity.ok("Wallet ricaricato con successo");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante la ricarica del wallet");
-        }
     }
 
 
@@ -198,7 +201,7 @@ public class ProfileController {
 
             for(int i = 0; i<acquisti.size(); i++) {
                 var oggetto = new OggettoDTO();
-                var ogg = itemRepository.findById(acquisti.get(i).getId()).orElse(null);
+                var ogg = itemRepository.findById(acquisti.get(i).getItem().getId()).orElse(null);
                 oggetto.setNome(ogg.getName());
                 oggetto.setDescrizione(ogg.getDescription());
                 oggetto.setStato(ogg.getStatus());

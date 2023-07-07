@@ -39,42 +39,47 @@ public class BuyerController {
 
     @PostMapping("/buyItem/{item}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<String> buyItem(@PathVariable("item") Long itemId, @RequestParam("token") String token) throws ParseException, JOSEException {
+    public HttpStatus buyItem(@PathVariable("item") Long itemId, @RequestParam("token") String token) throws ParseException, JOSEException {
 
-        var username = TokenStore.getInstance().getUser(token);
-        User user = userRepository.findByUsername(username);
-        Item item = itemRepository.findById(itemId).orElse(null);
+        try{
+            var username = TokenStore.getInstance().getUser(token);
+            User user = userRepository.findByUsername(username);
+            Item item = itemRepository.findById(itemId).orElse(null);
 
-        Date currentDate = new Date();
+            Date currentDate = new Date();
 
-        Purchase purchase = new Purchase();
-        purchase.setBuyer(user);
-        purchase.setId(IdGenerator.generateId());
-        purchase.setItem(item);
-        purchase.setSeller(item.getSeller());
-        purchase.setPrice(Math.toIntExact(item.getPrice()));
-        purchase.setPurchaseDate(currentDate);
+            Purchase purchase = new Purchase();
+            purchase.setBuyer(user);
+            purchase.setId(IdGenerator.generateId());
+            purchase.setItem(item);
+            purchase.setSeller(item.getSeller());
+            purchase.setPrice(Math.toIntExact(item.getPrice()));
+            purchase.setPurchaseDate(currentDate);
 
-        //item.setStatus(Dictionary.Status.SOLD);
-        //itemRepository.aggiornaStato(item.getId(), Dictionary.Status.SOLD.toString());
-        purchaseRepository.save(purchase);
+            //item.setStatus(Dictionary.Status.SOLD);
+            //itemRepository.aggiornaStato(item.getId(), Dictionary.Status.SOLD.toString());
+            purchaseRepository.save(purchase);
 
-        Optional<Wallet> wallet = walletRepository.findById(user.getId());
-        Optional<Wallet> wallet_riceve = walletRepository.findById(item.getSeller().getId());
-        Wallet wallet_ = wallet.orElse(null);
-        Wallet wallet_riceve_ = wallet_riceve.orElse(null);
-        var saldo = wallet_.getSaldo() - item.getPrice() ;
-        var saldo_riceve = wallet_riceve_.getSaldo() + item.getPrice();
-        wallet_.setSaldo((int) saldo);
-        walletRepository.aggiornaSaldo(wallet_.getId_utente(), (int) saldo);
-        walletRepository.aggiornaSaldo(wallet_riceve_.getId_utente(), (int) saldo_riceve);
+            Optional<Wallet> wallet = walletRepository.findById(user.getId());
+            Optional<Wallet> wallet_riceve = walletRepository.findById(item.getSeller().getId());
+            Wallet wallet_ = wallet.orElse(null);
+            Wallet wallet_riceve_ = wallet_riceve.orElse(null);
+            var saldo = wallet_.getSaldo() - item.getPrice() ;
+            var saldo_riceve = wallet_riceve_.getSaldo() + item.getPrice();
+            wallet_.setSaldo((int) saldo);
+            walletRepository.aggiornaSaldo(wallet_.getId_utente(), (int) saldo);
+            walletRepository.aggiornaSaldo(wallet_riceve_.getId_utente(), (int) saldo_riceve);
 
 
-        //itemRepository.aggiornaStato(item.getId(), Dictionary.Status.IN_DELIVERY);
+            //itemRepository.aggiornaStato(item.getId(), Dictionary.Status.IN_DELIVERY);
 
-        String param = item.getName()+ " $" +item.getPrice().toString()+" giorno: "+ currentDate.toString();
-        emailManager.sendEmail(3, param ,user.getEmail());
-        return ResponseEntity.ok("oggetto venduto");
+            String param = item.getName()+ " $" +item.getPrice().toString()+" giorno: "+ currentDate.toString();
+            emailManager.sendEmail(3, param ,user.getEmail());
+            return HttpStatus.OK;
+        }catch(Exception e){
+            return HttpStatus.BAD_REQUEST;
+        }
+
     }
 
 
