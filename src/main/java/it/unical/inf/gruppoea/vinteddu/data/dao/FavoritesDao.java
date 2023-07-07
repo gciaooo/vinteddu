@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface FavoritesDao extends JpaRepository<Favorites, Integer>, JpaSpecificationExecutor<Favorites> {
+public interface FavoritesDao extends JpaRepository<Favorites, Long>, JpaSpecificationExecutor<Favorites> {
 
     @Transactional
     @Modifying
-    @Query("Select idOggetto From Favorites where idUtente=:idUtente ")
-    List<Long> getListaPreferiti(@Param("idUtente") Long idUtente);
+    @Query("Select id_Oggetto From Favorites where id_Utente=:id_Utente ")
+    List<Long> getListaPreferiti(@Param("id_Utente") Long id_utente);
 
 
 }

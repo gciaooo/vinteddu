@@ -4,6 +4,7 @@ public class IdGenerator {
     private static Long lastIdPurchase = Long.valueOf(0);
     private static Long lastIdUser = Long.valueOf(0);
     private static Long lastIdItem = Long.valueOf(0);
+    private static Long lastIdFavorites = Long.valueOf(0);
 
     public static Long generateId() {
         lastIdPurchase++;
@@ -20,4 +21,8 @@ public class IdGenerator {
         return lastIdItem;
     }
 
+    public static Long generateIdFavorites() {
+        lastIdFavorites++;
+        return lastIdFavorites;
+    }
 }

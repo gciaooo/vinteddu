@@ -11,11 +11,14 @@ import lombok.NoArgsConstructor;
 public class Favorites {
 
     @Id
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "id_utente")
-    private Long idUtente;
+    private Long id_Utente;
 
     @Column(name = "id_oggetto")
-    private Long idOggetto;
+    private Long id_Oggetto;
 
 
 }
