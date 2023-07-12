@@ -4,6 +4,7 @@ package it.unical.inf.gruppoea.vinteddu.controller;
 import com.nimbusds.jose.JOSEException;
 import it.unical.inf.gruppoea.vinteddu.data.dao.*;
 import it.unical.inf.gruppoea.vinteddu.data.entities.*;
+import it.unical.inf.gruppoea.vinteddu.dto.Dictionary.Dictionary;
 import it.unical.inf.gruppoea.vinteddu.security.TokenStore;
 import it.unical.inf.gruppoea.vinteddu.utilities.EmailManager;
 import it.unical.inf.gruppoea.vinteddu.utilities.IdGenerator;
@@ -56,8 +57,7 @@ public class BuyerController {
             purchase.setPrice(Math.toIntExact(item.getPrice()));
             purchase.setPurchaseDate(currentDate);
 
-            //item.setStatus(Dictionary.Status.SOLD);
-            //itemRepository.aggiornaStato(item.getId(), Dictionary.Status.SOLD.toString());
+            item.setStatus(Dictionary.Status.SOLD);
             purchaseRepository.save(purchase);
 
             Optional<Wallet> wallet = walletRepository.findById(user.getId());

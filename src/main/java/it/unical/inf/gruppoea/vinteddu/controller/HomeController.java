@@ -39,9 +39,9 @@ public class HomeController {
     private UserDao userRepository;
 
 
-    @GetMapping("/search/{nome}")
+    @GetMapping("/search/{nome}/{token}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<List<OggettoDTO>> searchItemByName(@PathVariable("nome") String nome, @RequestParam String token) throws ParseException, JOSEException {
+    public ResponseEntity<List<OggettoDTO>> searchItemByName(@PathVariable("nome") String nome, @PathVariable("token") String token) throws ParseException, JOSEException {
         List<Item> oggetti = itemRepository.findByNameContainingIgnoreCase(nome);
         List<OggettoDTO> lista = new ArrayList<>();
         var username = TokenStore.getInstance().getUser(token);
